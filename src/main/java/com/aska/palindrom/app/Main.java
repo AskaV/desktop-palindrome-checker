@@ -1,4 +1,4 @@
-package com.aska.palindrom;
+package com.aska.palindrom.app;
 
 public class Main {
   public static void main(String[] args) {
