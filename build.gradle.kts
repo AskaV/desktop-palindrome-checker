@@ -33,6 +33,6 @@ application {
 
 spotless {
     java {
-        googleJavaFormat()
+        googleJavaFormat().aosp()
     }
 }
