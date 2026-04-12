@@ -23,12 +23,18 @@ tasks.test {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(22))
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "com.aska.palindrom.app.Main"
     }
 }
 
 application {
-    mainClass.set("com.aska.palindrom.Main")
+    mainClass.set("com.aska.palindrom.app.Main")
 }
 
 spotless {
