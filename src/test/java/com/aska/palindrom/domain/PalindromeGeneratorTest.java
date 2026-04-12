@@ -23,7 +23,7 @@ class PalindromeGeneratorTest {
         String result = palindromeGenerator.generate(100000);
 
         assertNotNull(result);
-        assertEquals(1000000, result.length());
+        assertEquals(100000, result.length());
         assertTrue(palindromeChecker.isPalindrome(result));
     }
 
@@ -33,7 +33,7 @@ class PalindromeGeneratorTest {
         String result = palindromeGenerator.generate(1000000);
 
         assertNotNull(result);
-        assertEquals(10000000, result.length());
+        assertEquals(1000000, result.length());
         assertTrue(palindromeChecker.isPalindrome(result));
     }
 
@@ -44,7 +44,7 @@ class PalindromeGeneratorTest {
         result = result + "a";
 
         assertNotNull(result);
-        assertEquals(10000001, result.length());
+        assertEquals(1000001, result.length());
         assertFalse(palindromeChecker.isPalindrome(result));
     }
 }

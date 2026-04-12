@@ -23,7 +23,7 @@ public class PalindromeCheckerTest {
     }
 
     @Test
-    @DisplayName("Return false for empty string")
+    @DisplayName("Return true for white space string")
     void testSpaceCharacter() {
         assertTrue(palindromeChecker.isPalindrome(" "));
     }
