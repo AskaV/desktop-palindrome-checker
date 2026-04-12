@@ -11,6 +11,7 @@ import javax.swing.*;
 public class ResultPanel extends JPanel {
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
     private final JTextField resultField;
+    private final JLabel errorLabel;
 
     public ResultPanel() {
         super(new BorderLayout(0, UiDimensions.SMALL));
@@ -24,10 +25,19 @@ public class ResultPanel extends JPanel {
         resultField.setFont(UiFonts.RESULT_FIELD);
         resultField.setBorder(UiBorders.padding(UiDimensions.RESULT_GAP));
 
+        errorLabel = new JLabel(" ");
+        errorLabel.setFont(UiFonts.ERROR_LABEL);
+        errorLabel.setForeground(UiColors.RESULT_ERROR);
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        Dimension errorSize = new Dimension(0, 10);
+        errorLabel.setPreferredSize(errorSize);
+        errorLabel.setMinimumSize(errorSize);
+
         showNotChecked();
 
         add(resultLabel, BorderLayout.PAGE_START);
         add(resultField, BorderLayout.CENTER);
+        add(errorLabel, BorderLayout.PAGE_END);
     }
 
     public void showNotChecked() {
@@ -43,5 +53,9 @@ public class ResultPanel extends JPanel {
     public void showFailure() {
         resultField.setText(bundle.getString("label.result.no"));
         resultField.setBackground(UiColors.RESULT_ERROR);
+    }
+
+    public void showError(String message) {
+        errorLabel.setText(message);
     }
 }

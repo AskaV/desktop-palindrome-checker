@@ -1,15 +1,20 @@
 package com.aska.palindrom.presentation.controller;
 
+import static com.aska.palindrom.presentation.logging.AppLogger.LOGGER;
+
 import com.aska.palindrom.domain.PalindromeChecker;
 import com.aska.palindrom.presentation.panel.EditorPanel;
 import com.aska.palindrom.presentation.panel.ResultPanel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.logging.Level;
 
 public class MainScreenController {
     private final EditorPanel editorPanel;
     private final ResultPanel resultPanel;
     private final PalindromeChecker palindromeChecker;
+
+    private static final int MAX_INPUT_LENGTH = 1000000;
 
     public MainScreenController(
             EditorPanel editorPanel, ResultPanel resultPanel, PalindromeChecker palindromeChecker) {
@@ -31,25 +36,43 @@ public class MainScreenController {
                             @Override
                             public void keyReleased(KeyEvent e) {
                                 resultPanel.showNotChecked();
+                                resultPanel.showError("");
                             }
                         });
     }
 
     private void onCheckClicked() {
-        String text = editorPanel.getInputArea().getText();
+        LOGGER.info("Check button clicked");
 
-        boolean isPalindrome = palindromeChecker.isPalindrome(text);
+        try {
+            String text = editorPanel.getInputArea().getText();
+            if (text.isEmpty()) {
+                resultPanel.showNotChecked();
+                resultPanel.showError("Input is empty");
+                return;
+            }
+            if (text.length() > MAX_INPUT_LENGTH) {
+                LOGGER.warning("Check skipped: input is too large, length = " + text.length());
+                resultPanel.showError("Input is too large");
+                return;
+            }
 
-        if (text.isEmpty()) {
+            boolean isPalindrome = palindromeChecker.isPalindrome(text);
+
+            if (isPalindrome) {
+                resultPanel.showSuccess();
+            } else {
+                resultPanel.showFailure();
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error during palindrome check", e);
             resultPanel.showNotChecked();
-        } else if (isPalindrome) {
-            resultPanel.showSuccess();
-        } else {
-            resultPanel.showFailure();
         }
     }
 
     private void onClearClicked() {
+        LOGGER.info("Clear button clicked");
+
         editorPanel.clearText();
         resultPanel.showNotChecked();
     }

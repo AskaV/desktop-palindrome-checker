@@ -1,5 +1,7 @@
 package com.aska.palindrom.presentation;
 
+import static com.aska.palindrom.presentation.logging.AppLogger.LOGGER;
+
 import com.aska.palindrom.presentation.config.WindowSettings;
 import com.aska.palindrom.presentation.panel.MainPanel;
 import java.awt.*;
@@ -9,6 +11,7 @@ import javax.swing.*;
 public class MainFrame extends JFrame {
 
     public MainFrame() {
+        LOGGER.info("Start window program");
         WindowSettings windowSettings = WindowSettings.defaultSettings();
         configureWindow(windowSettings);
         setContentPane(new MainPanel());
@@ -28,6 +31,8 @@ public class MainFrame extends JFrame {
         URL iconUrl = MainFrame.class.getResource(settings.iconPath());
         if (iconUrl != null) {
             setIconImage(new ImageIcon(iconUrl).getImage());
+        } else {
+            LOGGER.warning("Application icon not found: " + settings.iconPath());
         }
     }
 }
