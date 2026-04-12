@@ -72,7 +72,7 @@ public class MainScreenController {
 
     private void onClearClicked() {
         LOGGER.info("Clear button clicked");
-
+        resultPanel.showError("");
         editorPanel.clearText();
         resultPanel.showNotChecked();
     }

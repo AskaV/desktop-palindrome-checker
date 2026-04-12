@@ -17,7 +17,7 @@ public class PalindromeCheckerTest {
     }
 
     @Test
-    @DisplayName("Return false for empty string")
+    @DisplayName("Return false for null string")
     void testEmptyString() {
         assertFalse(palindromeChecker.isPalindrome(""));
     }
