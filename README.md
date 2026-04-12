@@ -36,8 +36,9 @@ The core logic layer includes `PalindromeChecker` and `PalindromeGenerator`.
 1. Open PowerShell in the project root directory.
 2. Run the following command:
 
-`.\gradlew jar; if (Test-Path .\dist\PalindromeAnalyzer) { Remove-Item .\dist\PalindromeAnalyzer -Recurse -Force }; jpackage --type app-image --name PalindromeAnalyzer --input build\libs --main-jar desktop-palindrome-checker-1.0-SNAPSHOT.jar --main-class com.aska.palindrom.app.Main --dest dist; Copy-Item .\README.md .\dist\PalindromeAnalyzer\README.md -Force`
-
+`
+.\gradlew jar; if (Test-Path .\dist\PalindromeAnalyzer) { Remove-Item .\dist\PalindromeAnalyzer -Recurse -Force }; jpackage --type app-image --name PalindromeAnalyzer --input build\libs --main-jar desktop-palindrome-checker-1.0-SNAPSHOT.jar --main-class com.aska.palindrom.app.Main --dest dist; Copy-Item .\README.md .\dist\PalindromeAnalyzer\README.md -Force 
+`
 3. After the packaging process is complete, the Windows artifact will be available in the `dist/PalindromeAnalyzer/` folder.
 
 ### Command breakdown

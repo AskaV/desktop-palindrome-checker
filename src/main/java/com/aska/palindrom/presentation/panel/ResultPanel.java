@@ -29,7 +29,7 @@ public class ResultPanel extends JPanel {
         errorLabel.setFont(UiFonts.ERROR_LABEL);
         errorLabel.setForeground(UiColors.RESULT_ERROR);
         errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        Dimension errorSize = new Dimension(0, 10);
+        Dimension errorSize = new Dimension(0, 18);
         errorLabel.setPreferredSize(errorSize);
         errorLabel.setMinimumSize(errorSize);
 
