@@ -7,6 +7,10 @@ import com.aska.palindrom.domain.settings.NormalizationSettings;
 public class PalindromeChecker {
     private final TextNormalizer textNormalizer = new TextNormalizer();
 
+    public boolean isPalindrome(String text) {
+        return isPalindrome(text, NormalizationSettings.disabled());
+    }
+
     public boolean isPalindrome(String text, NormalizationSettings options) {
         LOGGER.info("Start palindrome checking logic");
 

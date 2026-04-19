@@ -5,4 +5,8 @@ public record NormalizationSettings(
         boolean ignoreSpaces,
         boolean ignorePunctuation,
         boolean unicodeNormalization,
-        boolean ignoreDiacritics) {}
+        boolean ignoreDiacritics) {
+    public static NormalizationSettings disabled() {
+        return new NormalizationSettings(false, false, false, false, false);
+    }
+}
