@@ -1,9 +1,11 @@
 package com.aska.palindrom.presentation.panel;
 
+import com.aska.palindrom.domain.settings.NormalizationSettings;
 import com.aska.palindrom.presentation.config.UiBorders;
 import com.aska.palindrom.presentation.config.UiColors;
 import com.aska.palindrom.presentation.config.UiDimensions;
 import com.aska.palindrom.presentation.config.UiFonts;
+import com.aska.palindrom.presentation.panel.components.NormalizationOptionsButton;
 import java.awt.*;
 import java.util.ResourceBundle;
 import javax.swing.*;
@@ -13,6 +15,7 @@ public class EditorPanel extends JPanel {
     private final JTextArea inputArea;
     private final JButton checkButton;
     private final JButton clearButton;
+    private final NormalizationOptionsButton normalizationButton;
 
     public EditorPanel() {
         super(new BorderLayout(0, UiDimensions.EDITOR_GAP));
@@ -22,6 +25,7 @@ public class EditorPanel extends JPanel {
 
         checkButton = new JButton(bundle.getString("button.check"));
         clearButton = new JButton(bundle.getString("button.clear"));
+        normalizationButton = new NormalizationOptionsButton(bundle);
 
         add(createTabsPanel(), BorderLayout.CENTER);
         add(createButtonsPanel(), BorderLayout.PAGE_END);
@@ -43,9 +47,12 @@ public class EditorPanel extends JPanel {
 
         checkButton.setPreferredSize(UiDimensions.ACTION_BUTTON_SIZE);
         clearButton.setPreferredSize(UiDimensions.ACTION_BUTTON_SIZE);
+        normalizationButton.setPreferredSize(UiDimensions.ACTION_BUTTON_SIZE);
 
         panel.add(checkButton);
         panel.add(clearButton);
+        panel.add(normalizationButton);
+
         return panel;
     }
 
@@ -74,5 +81,13 @@ public class EditorPanel extends JPanel {
 
     public void clearText() {
         inputArea.setText("");
+    }
+
+    public void clearNormalizationCheckboxes() {
+        normalizationButton.resetSettings();
+    }
+
+    public NormalizationSettings getNormalizationSettings() {
+        return normalizationButton.getNormalizationSettings();
     }
 }

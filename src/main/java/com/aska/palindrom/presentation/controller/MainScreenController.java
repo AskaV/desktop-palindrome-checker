@@ -7,9 +7,11 @@ import com.aska.palindrom.presentation.panel.EditorPanel;
 import com.aska.palindrom.presentation.panel.ResultPanel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 public class MainScreenController {
+    private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
     private final EditorPanel editorPanel;
     private final ResultPanel resultPanel;
     private final PalindromeChecker palindromeChecker;
@@ -48,16 +50,17 @@ public class MainScreenController {
             String text = editorPanel.getInputArea().getText();
             if (text.isEmpty()) {
                 resultPanel.showNotChecked();
-                resultPanel.showError("Input is empty");
+                resultPanel.showError(bundle.getString("error.inputEmpty"));
                 return;
             }
             if (text.length() > MAX_INPUT_LENGTH) {
                 LOGGER.warning("Check skipped: input is too large, length = " + text.length());
-                resultPanel.showError("Input is too large");
+                resultPanel.showError(bundle.getString("error.inputTooLarge"));
                 return;
             }
 
-            boolean isPalindrome = palindromeChecker.isPalindrome(text);
+            boolean isPalindrome =
+                    palindromeChecker.isPalindrome(text, editorPanel.getNormalizationSettings());
 
             if (isPalindrome) {
                 resultPanel.showSuccess();
@@ -74,6 +77,7 @@ public class MainScreenController {
         LOGGER.info("Clear button clicked");
         resultPanel.showError("");
         editorPanel.clearText();
+        editorPanel.clearNormalizationCheckboxes();
         resultPanel.showNotChecked();
     }
 }
