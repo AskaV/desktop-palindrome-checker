@@ -13,6 +13,7 @@ import javax.swing.*;
 public class EditorPanel extends JPanel {
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
     private final JTextArea inputArea;
+    private final JTextArea normalizedArea;
     private final JButton checkButton;
     private final JButton clearButton;
     private final NormalizationOptionsButton normalizationButton;
@@ -22,6 +23,7 @@ public class EditorPanel extends JPanel {
         setBorder(BorderFactory.createLineBorder(UiColors.PANEL_BORDER));
 
         inputArea = createTextArea(true);
+        normalizedArea = createTextArea(false);
 
         checkButton = new JButton(bundle.getString("button.check"));
         clearButton = new JButton(bundle.getString("button.clear"));
@@ -34,6 +36,8 @@ public class EditorPanel extends JPanel {
     private JTabbedPane createTabsPanel() {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab(bundle.getString("tab.input"), new JScrollPane(inputArea));
+        tabbedPane.addTab(bundle.getString("tab.normalized"), new JScrollPane(normalizedArea));
+
         return tabbedPane;
     }
 
@@ -89,5 +93,14 @@ public class EditorPanel extends JPanel {
 
     public NormalizationSettings getNormalizationSettings() {
         return normalizationButton.getNormalizationSettings();
+    }
+
+    public void showNormalizedText(String text) {
+        normalizedArea.setText(text);
+        normalizedArea.setCaretPosition(0);
+    }
+
+    public void clearNormalizedText() {
+        normalizedArea.setText("");
     }
 }
