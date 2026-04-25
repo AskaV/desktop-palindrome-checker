@@ -1,20 +1,21 @@
-package com.aska.palindrom.domain.meaningfulness;
+package com.aska.palindrom.domain.meaningfulness.dictionary;
 
-import java.util.ArrayList;
+import com.aska.palindrom.domain.meaningfulness.EnglishDictionary;
+import com.aska.palindrom.domain.meaningfulness.MeaningfulnessTokenizer;
 import java.util.List;
-import java.util.Locale;
 
 public class DictionaryMeaningfulnessChecker {
     private static final double MIN_MEANINGFUL_PERCENT = 60.0;
 
     private final EnglishDictionary dictionary = new EnglishDictionary();
+    private final MeaningfulnessTokenizer tokenizer = new MeaningfulnessTokenizer();
 
     public DictionaryMeaningfulnessResult check(String text) {
         if (text == null || text.isBlank()) {
             return new DictionaryMeaningfulnessResult(false, 0.0, "Input is empty.");
         }
 
-        List<String> tokens = tokenize(text);
+        List<String> tokens = tokenizer.tokenize(text);
         if (tokens.isEmpty()) {
             return new DictionaryMeaningfulnessResult(
                     false, 0.0, "No valid word tokens were found.");
@@ -34,20 +35,6 @@ public class DictionaryMeaningfulnessChecker {
                         + "%).";
 
         return new DictionaryMeaningfulnessResult(meaningful, roundScore(score), explanation);
-    }
-
-    private List<String> tokenize(String text) {
-        String[] rawTokens = text.toLowerCase(Locale.ROOT).split("\\s+");
-        List<String> tokens = new ArrayList<>();
-
-        for (String rawToken : rawTokens) {
-            String cleanedToken = rawToken.replaceAll("[^a-z]", "");
-            if (!cleanedToken.isBlank()) {
-                tokens.add(cleanedToken);
-            }
-        }
-
-        return tokens;
     }
 
     private int countDictionaryMatches(List<String> tokens) {

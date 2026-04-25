@@ -1,4 +1,4 @@
-package com.aska.palindrom.domain.meaningfulness;
+package com.aska.palindrom.domain.meaningfulness.dictionary;
 
 import static org.junit.jupiter.api.Assertions.*;
 
