@@ -9,4 +9,12 @@ public record NormalizationSettings(
     public static NormalizationSettings disabled() {
         return new NormalizationSettings(false, false, false, false, false);
     }
+
+    public boolean hasAnyEnabledOption() {
+        return ignoreCase
+                || ignoreSpaces
+                || ignorePunctuation
+                || unicodeNormalization
+                || ignoreDiacritics;
+    }
 }

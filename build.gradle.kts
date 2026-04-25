@@ -33,6 +33,10 @@ tasks.jar {
     }
 }
 
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+}
+
 application {
     mainClass.set("com.aska.palindrom.app.Main")
 }
