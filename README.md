@@ -12,6 +12,23 @@ The core logic layer includes `PalindromeChecker` and `PalindromeGenerator`.
 `PalindromeChecker` performs palindrome validation, while `PalindromeGenerator` creates deterministic palindrome strings for testing. 
 `MainScreenController` acts as a bridge between the UI and the core logic by processing user actions and passing data between them.
 
+## Input limit
+To keep the application responsive, the maximum supported input length is 1,000,000 characters.
+If the input is longer, the palindrome check is skipped and an error message is shown.
+
+## Meaningfulness resources
+
+The meaningfulness checker uses an offline English word list bundled with the application.
+
+Source:
+- `github.com/dwyl/english-words` (`words.txt`)
+
+Notes:
+- the source provides a text file with English words
+- license: Unlicense
+- the file is stored locally in `src/main/resources/dictionary/english_words.txt`
+- no network access is required
+
 ## Prerequisites
 
 ### For running the packaged application
