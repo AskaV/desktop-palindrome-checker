@@ -1,9 +1,8 @@
-package com.aska.palindrom.domain;
+package com.aska.palindrom.domain.meaningfulness;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.aska.palindrom.domain.meaningfulness.EnglishDictionary;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
