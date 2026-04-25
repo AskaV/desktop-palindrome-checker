@@ -6,8 +6,8 @@ import java.util.Set;
 
 public class RandomSequenceHeuristicChecker {
     private static final double MIN_NATURAL_SCORE = 60.0;
-    private static final int CHECK_COUNT = 5;
-    private static final double CHECK_WEIGHT = 100.0 / CHECK_COUNT;
+    static final int HEURISTIC_CHECK_COUNT = 5;
+    private static final double CHECK_WEIGHT = 100.0 / HEURISTIC_CHECK_COUNT;
 
     private static final Set<Character> VOWELS = Set.of('a', 'e', 'i', 'o', 'u', 'y');
 
