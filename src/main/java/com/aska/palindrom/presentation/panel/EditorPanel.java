@@ -1,6 +1,8 @@
 package com.aska.palindrom.presentation.panel;
 
 import com.aska.palindrom.domain.settings.NormalizationSettings;
+import com.aska.palindrom.presentation.HistoryPanel;
+import com.aska.palindrom.presentation.MeaningfulnessPanel;
 import com.aska.palindrom.presentation.config.UiBorders;
 import com.aska.palindrom.presentation.config.UiColors;
 import com.aska.palindrom.presentation.config.UiDimensions;
@@ -14,6 +16,8 @@ public class EditorPanel extends JPanel {
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
     private final JTextArea inputArea;
     private final JTextArea normalizedArea;
+    private final MeaningfulnessPanel meaningfulnessPanel;
+    private final HistoryPanel historyPanel;
     private final JButton checkButton;
     private final JButton clearButton;
     private final NormalizationOptionsButton normalizationButton;
@@ -24,6 +28,8 @@ public class EditorPanel extends JPanel {
 
         inputArea = createTextArea(true);
         normalizedArea = createTextArea(false);
+        meaningfulnessPanel = new MeaningfulnessPanel();
+        historyPanel = new HistoryPanel();
 
         checkButton = new JButton(bundle.getString("button.check"));
         clearButton = new JButton(bundle.getString("button.clear"));
@@ -37,6 +43,8 @@ public class EditorPanel extends JPanel {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab(bundle.getString("tab.input"), new JScrollPane(inputArea));
         tabbedPane.addTab(bundle.getString("tab.normalized"), new JScrollPane(normalizedArea));
+        tabbedPane.addTab(bundle.getString("tab.meaningfulness"), meaningfulnessPanel);
+        tabbedPane.addTab(bundle.getString("tab.history"), historyPanel);
 
         return tabbedPane;
     }
@@ -102,5 +110,13 @@ public class EditorPanel extends JPanel {
 
     public void clearNormalizedText() {
         normalizedArea.setText("");
+    }
+
+    public MeaningfulnessPanel getMeaningfulnessPanel() {
+        return meaningfulnessPanel;
+    }
+
+    public HistoryPanel getHistoryPanel() {
+        return historyPanel;
     }
 }
