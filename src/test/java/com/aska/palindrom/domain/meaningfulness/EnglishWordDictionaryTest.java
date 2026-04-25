@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class EnglishDictionaryTest {
+public class EnglishWordDictionaryTest {
 
-    private final EnglishDictionary dictionary = new EnglishDictionary();
+    private final EnglishWordDictionary dictionary = new EnglishWordDictionary();
 
     @Test
     @DisplayName("Contain common English word")

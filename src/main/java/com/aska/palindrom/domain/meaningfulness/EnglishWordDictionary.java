@@ -8,12 +8,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EnglishDictionary {
+public class EnglishWordDictionary {
     private static final String DICTIONARY_PATH = "/dictionary/english_words.txt";
 
     private final Set<String> words;
 
-    public EnglishDictionary() {
+    public EnglishWordDictionary() {
         this.words = loadWords();
     }
 

@@ -1,40 +1,37 @@
 package com.aska.palindrom.domain.meaningfulness.dictionary;
 
-import com.aska.palindrom.domain.meaningfulness.EnglishDictionary;
-import com.aska.palindrom.domain.meaningfulness.MeaningfulnessTokenizer;
+import com.aska.palindrom.domain.meaningfulness.EnglishWordDictionary;
+import com.aska.palindrom.domain.meaningfulness.MeaningfulnessAnalysisSupport;
 import java.util.List;
 
 public class DictionaryMeaningfulnessChecker {
     private static final double MIN_MEANINGFUL_PERCENT = 60.0;
 
-    private final EnglishDictionary dictionary = new EnglishDictionary();
-    private final MeaningfulnessTokenizer tokenizer = new MeaningfulnessTokenizer();
+    private final EnglishWordDictionary dictionary = new EnglishWordDictionary();
+    private final MeaningfulnessAnalysisSupport support = new MeaningfulnessAnalysisSupport();
 
     public DictionaryMeaningfulnessResult check(String text) {
-        if (text == null || text.isBlank()) {
-            return new DictionaryMeaningfulnessResult(false, 0.0, "Input is empty.");
-        }
+        try {
+            List<String> tokens = support.requireTokens(text);
 
-        List<String> tokens = tokenizer.tokenize(text);
-        if (tokens.isEmpty()) {
+            int matchedWords = countDictionaryMatches(tokens);
+            double score = (double) matchedWords / tokens.size() * 100.0;
+            boolean meaningful = score >= MIN_MEANINGFUL_PERCENT;
+
+            String explanation =
+                    "Dictionary match: "
+                            + matchedWords
+                            + "/"
+                            + tokens.size()
+                            + " words ("
+                            + support.roundScore(score)
+                            + "%).";
+
             return new DictionaryMeaningfulnessResult(
-                    false, 0.0, "No valid word tokens were found.");
+                    meaningful, support.roundScore(score), explanation);
+        } catch (IllegalArgumentException e) {
+            return new DictionaryMeaningfulnessResult(false, 0.0, e.getMessage());
         }
-
-        int matchedWords = countDictionaryMatches(tokens);
-        double score = (double) matchedWords / tokens.size() * 100.0;
-        boolean meaningful = score >= MIN_MEANINGFUL_PERCENT;
-
-        String explanation =
-                "Dictionary match: "
-                        + matchedWords
-                        + "/"
-                        + tokens.size()
-                        + " words ("
-                        + roundScore(score)
-                        + "%).";
-
-        return new DictionaryMeaningfulnessResult(meaningful, roundScore(score), explanation);
     }
 
     private int countDictionaryMatches(List<String> tokens) {
@@ -47,9 +44,5 @@ public class DictionaryMeaningfulnessChecker {
         }
 
         return matches;
-    }
-
-    private double roundScore(double score) {
-        return Math.round(score * 10.0) / 10.0;
     }
 }
