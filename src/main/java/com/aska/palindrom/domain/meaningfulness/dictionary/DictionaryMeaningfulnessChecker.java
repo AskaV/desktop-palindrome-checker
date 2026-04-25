@@ -1,13 +1,13 @@
 package com.aska.palindrom.domain.meaningfulness.dictionary;
 
-import com.aska.palindrom.domain.meaningfulness.EnglishWordDictionary;
+import com.aska.palindrom.domain.meaningfulness.EnglishWordList;
 import com.aska.palindrom.domain.meaningfulness.MeaningfulnessAnalysisSupport;
 import java.util.List;
 
 public class DictionaryMeaningfulnessChecker {
     private static final double MIN_MEANINGFUL_PERCENT = 60.0;
 
-    private final EnglishWordDictionary dictionary = new EnglishWordDictionary();
+    private final EnglishWordList dictionary = new EnglishWordList();
     private final MeaningfulnessAnalysisSupport support = new MeaningfulnessAnalysisSupport();
 
     public DictionaryMeaningfulnessResult check(String text) {
