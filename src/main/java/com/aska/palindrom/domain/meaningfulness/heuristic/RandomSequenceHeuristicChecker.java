@@ -20,7 +20,7 @@ public class RandomSequenceHeuristicChecker {
             double totalScore = 0.0;
 
             for (String token : tokens) {
-                totalScore += scoreToken(token);
+                totalScore += analyzeToken(token).score();
             }
 
             double finalScore = totalScore / tokens.size();
@@ -36,7 +36,12 @@ public class RandomSequenceHeuristicChecker {
         }
     }
 
-    private double scoreToken(String token) {
+    public TokenHeuristicAnalysis analyzeToken(String token) {
+        boolean hasVowel = hasVowel(token);
+        boolean noLongConsonantSequence = !hasLongConsonantSequence(token, 4);
+        boolean noRepeatedCharacterSequence = !hasRepeatedCharacterSequence(token, 4);
+        boolean noRarePattern = !containsRarePattern(token);
+        boolean reasonableLength = hasReasonableLength(token);
         double score = 0.0;
 
         if (hasVowel(token)) {
@@ -59,7 +64,13 @@ public class RandomSequenceHeuristicChecker {
             score += CHECK_WEIGHT;
         }
 
-        return score;
+        return new TokenHeuristicAnalysis(
+                hasVowel,
+                noLongConsonantSequence,
+                noRepeatedCharacterSequence,
+                noRarePattern,
+                reasonableLength,
+                support.roundScore(score));
     }
 
     private boolean hasVowel(String token) {

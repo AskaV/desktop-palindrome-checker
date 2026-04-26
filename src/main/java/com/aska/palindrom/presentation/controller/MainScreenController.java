@@ -77,7 +77,8 @@ public class MainScreenController {
                     .showMeaningfulness(
                             meaningfulnessResult.meaningful(),
                             meaningfulnessResult.score(),
-                            meaningfulnessResult.explanation());
+                            meaningfulnessResult.explanation(),
+                            meaningfulnessResult.tokenRows());
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error during palindrome and meaningfulness check", e);
             resultPanel.showNotChecked();
