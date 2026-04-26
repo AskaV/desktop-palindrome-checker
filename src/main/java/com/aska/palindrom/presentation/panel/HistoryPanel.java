@@ -14,6 +14,8 @@ public class HistoryPanel extends JPanel {
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
 
     private final JButton exportCsvButton;
+    private final JButton exportJsonButton;
+    private final JButton clearHistoryButton;
     private final DefaultTableModel tableModel;
     private final JTable table;
 
@@ -23,6 +25,10 @@ public class HistoryPanel extends JPanel {
 
         exportCsvButton = new JButton(bundle.getString("history.button.exportCsv"));
         exportCsvButton.setPreferredSize(UiDimensions.ACTION_BUTTON_SIZE);
+        exportJsonButton = new JButton(bundle.getString("history.button.exportJson"));
+        exportJsonButton.setPreferredSize(UiDimensions.ACTION_BUTTON_SIZE);
+        clearHistoryButton = new JButton(bundle.getString("history.button.clear"));
+        clearHistoryButton.setPreferredSize(UiDimensions.ACTION_BUTTON_SIZE);
 
         tableModel =
                 new DefaultTableModel(
@@ -57,11 +63,9 @@ public class HistoryPanel extends JPanel {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panel.setBorder(UiBorders.padding(UiDimensions.TEXT_PADDING));
         panel.add(exportCsvButton);
+        panel.add(exportJsonButton);
+        panel.add(clearHistoryButton);
         return panel;
-    }
-
-    public JButton getExportCsvButton() {
-        return exportCsvButton;
     }
 
     public void addHistoryEntry(
@@ -79,6 +83,18 @@ public class HistoryPanel extends JPanel {
                 new Object[] {
                     timestamp, inputPreview, palindromeResult, meaningfulnessResult, scoreText
                 });
+    }
+
+    public JButton getExportCsvButton() {
+        return exportCsvButton;
+    }
+
+    public JButton getExportJsonButton() {
+        return exportJsonButton;
+    }
+
+    public JButton getClearHistoryButton() {
+        return clearHistoryButton;
     }
 
     public void clear() {

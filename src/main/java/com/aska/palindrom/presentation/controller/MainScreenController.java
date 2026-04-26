@@ -6,6 +6,8 @@ import com.aska.palindrom.domain.PalindromeChecker;
 import com.aska.palindrom.domain.TextNormalizer;
 import com.aska.palindrom.domain.history.HistoryCsvExporter;
 import com.aska.palindrom.domain.history.HistoryEntry;
+import com.aska.palindrom.domain.history.HistoryJsonExporter;
+import com.aska.palindrom.domain.history.HistoryJsonStorage;
 import com.aska.palindrom.domain.meaningfulness.combined.MeaningfulnessChecker;
 import com.aska.palindrom.domain.meaningfulness.combined.MeaningfulnessResult;
 import com.aska.palindrom.domain.settings.NormalizationSettings;
@@ -39,6 +41,10 @@ public class MainScreenController {
 
     private final List<HistoryEntry> historyEntries = new ArrayList<>();
 
+    private final HistoryJsonExporter historyJsonExporter = new HistoryJsonExporter();
+    private final HistoryJsonStorage historyJsonStorage = new HistoryJsonStorage();
+    private final Path historyStoragePath = Path.of("history.json");
+
     public MainScreenController(
             EditorPanel editorPanel,
             ResultPanel resultPanel,
@@ -50,6 +56,7 @@ public class MainScreenController {
         this.meaningfulnessChecker = meaningfulnessChecker;
 
         bindActions();
+        loadHistory();
     }
 
     private void bindActions() {
@@ -59,6 +66,16 @@ public class MainScreenController {
                 .getHistoryPanel()
                 .getExportCsvButton()
                 .addActionListener(e -> onExportCsvClicked());
+
+        editorPanel
+                .getHistoryPanel()
+                .getExportJsonButton()
+                .addActionListener(e -> onExportJsonClicked());
+
+        editorPanel
+                .getHistoryPanel()
+                .getClearHistoryButton()
+                .addActionListener(e -> onClearHistoryClicked());
 
         editorPanel
                 .getInputArea()
@@ -176,6 +193,7 @@ public class MainScreenController {
                         scoreText);
 
         historyEntries.add(entry);
+        saveHistorySilently();
 
         editorPanel
                 .getHistoryPanel()
@@ -185,6 +203,21 @@ public class MainScreenController {
                         entry.palindromeResult(),
                         entry.meaningfulnessResult(),
                         entry.scoreText());
+    }
+
+    private void onClearHistoryClicked() {
+        LOGGER.info("Clear history button clicked");
+
+        historyEntries.clear();
+        editorPanel.getHistoryPanel().clear();
+
+        try {
+            historyJsonStorage.save(historyEntries, historyStoragePath);
+            resultPanel.showSuccessMessage(bundle.getString("history.clear.success"));
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Failed to clear history", e);
+            resultPanel.showError(bundle.getString("history.clear.error"));
+        }
     }
 
     private String buildInputPreview(String text) {
@@ -231,8 +264,69 @@ public class MainScreenController {
         }
     }
 
-    public List<HistoryEntry> getHistoryEntries() {
-        return List.copyOf(historyEntries);
+    private void onExportJsonClicked() {
+        LOGGER.info("Export JSON button clicked");
+        resultPanel.showError("");
+
+        if (historyEntries.isEmpty()) {
+            resultPanel.showError(bundle.getString("history.export.empty"));
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(bundle.getString("history.export.jsonDialogTitle"));
+        fileChooser.setSelectedFile(new java.io.File("history.json"));
+
+        int result = fileChooser.showSaveDialog(editorPanel);
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        Path filePath = fileChooser.getSelectedFile().toPath();
+        if (!filePath.toString().toLowerCase().endsWith(".json")) {
+            filePath = Path.of(filePath.toString() + ".json");
+        }
+
+        try {
+            historyJsonExporter.export(historyEntries, filePath);
+            LOGGER.info("History exported to JSON: " + filePath);
+            resultPanel.showSuccessMessage(bundle.getString("history.export.successJson"));
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Failed to export history to JSON", e);
+            resultPanel.showError(bundle.getString("history.export.error"));
+        }
+    }
+
+    private void loadHistory() {
+        try {
+            List<HistoryEntry> loadedEntries = historyJsonStorage.load(historyStoragePath);
+            historyEntries.addAll(loadedEntries);
+
+            for (HistoryEntry entry : loadedEntries) {
+                editorPanel
+                        .getHistoryPanel()
+                        .addHistoryEntry(
+                                entry.timestamp(),
+                                entry.inputPreview(),
+                                entry.palindromeResult(),
+                                entry.meaningfulnessResult(),
+                                entry.scoreText());
+            }
+
+            LOGGER.info("History loaded successfully");
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Failed to load history", e);
+            resultPanel.showError(bundle.getString("history.load.error"));
+        }
+    }
+
+    private void saveHistorySilently() {
+        try {
+            historyJsonStorage.save(historyEntries, historyStoragePath);
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Failed to save history", e);
+            resultPanel.showError(bundle.getString("history.save.error"));
+        }
     }
 
     private void onClearClicked() {
