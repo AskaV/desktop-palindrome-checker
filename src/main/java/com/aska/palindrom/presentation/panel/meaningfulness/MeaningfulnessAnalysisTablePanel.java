@@ -1,38 +1,30 @@
-package com.aska.palindrom.presentation;
+package com.aska.palindrom.presentation.panel.meaningfulness;
 
 import com.aska.palindrom.domain.meaningfulness.TokenAnalysisRow;
 import com.aska.palindrom.presentation.config.UiBorders;
-import com.aska.palindrom.presentation.config.UiColors;
 import com.aska.palindrom.presentation.config.UiDimensions;
-import com.aska.palindrom.presentation.config.UiFonts;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-public class MeaningfulnessPanel extends JPanel {
+public class MeaningfulnessAnalysisTablePanel extends JPanel {
     private static final int MAIN_COLUMN_COUNT = 9;
     private static final int GROUP_WORD_COLUMNS = 1;
     private static final int GROUP_DICTIONARY_COLUMNS = 2;
     private static final int GROUP_HEURISTIC_COLUMNS = 6;
+    private static final double DICTIONARY_POSITIVE_SCORE = 100.0;
+    private static final int HEURISTIC_CHECK_COUNT = 5;
+    private static final double HEURISTIC_POSITIVE_SCORE = 100.0 / HEURISTIC_CHECK_COUNT;
 
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
-
-    private final JLabel resultLabel;
-    private final JLabel scoreLabel;
-    private final JLabel explanationLabel;
 
     private final JTable groupTable;
     private final DefaultTableModel groupTableModel;
@@ -42,20 +34,9 @@ public class MeaningfulnessPanel extends JPanel {
     private final DefaultTableModel tableModel;
     private final JScrollPane tableScrollPane;
 
-    private final JPanel tableSectionPanel;
-
-    public MeaningfulnessPanel() {
+    public MeaningfulnessAnalysisTablePanel() {
         super(new BorderLayout(0, 0));
-        setBorder(BorderFactory.createLineBorder(UiColors.PANEL_BORDER));
-
-        resultLabel = new JLabel(bundle.getString("meaningfulness.result"));
-        resultLabel.setFont(UiFonts.RESULT_LABEL);
-
-        scoreLabel = new JLabel(bundle.getString("meaningfulness.score"));
-        scoreLabel.setFont(UiFonts.TEXT_AREA);
-
-        explanationLabel = new JLabel(bundle.getString("meaningfulness.explanation"));
-        explanationLabel.setFont(UiFonts.TEXT_AREA);
+        setBorder(UiBorders.padding(UiDimensions.TEXT_PADDING));
 
         groupTableModel =
                 new DefaultTableModel(
@@ -102,33 +83,12 @@ public class MeaningfulnessPanel extends JPanel {
         configureGroupTable();
         configureTable();
 
-        tableSectionPanel = createTableSection();
-
-        add(createHeaderPanel(), BorderLayout.PAGE_START);
-        add(tableSectionPanel, BorderLayout.CENTER);
-
+        add(createTableSection(), BorderLayout.CENTER);
         installResizeHandling();
-    }
-
-    private JPanel createHeaderPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(UiBorders.padding(UiDimensions.TEXT_PADDING));
-
-        resultLabel.setAlignmentX(LEFT_ALIGNMENT);
-        scoreLabel.setAlignmentX(LEFT_ALIGNMENT);
-        explanationLabel.setAlignmentX(LEFT_ALIGNMENT);
-
-        panel.add(resultLabel);
-        panel.add(scoreLabel);
-        panel.add(explanationLabel);
-
-        return panel;
     }
 
     private JPanel createTableSection() {
         JPanel panel = new JPanel(new BorderLayout(0, 0));
-        panel.setBorder(UiBorders.padding(UiDimensions.TEXT_PADDING));
 
         groupScrollPane.setPreferredSize(new Dimension(0, groupTable.getRowHeight() + 4));
         panel.add(groupScrollPane, BorderLayout.PAGE_START);
@@ -148,6 +108,13 @@ public class MeaningfulnessPanel extends JPanel {
         groupTable.setFocusable(false);
         groupTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
+        DefaultTableCellRenderer groupRenderer = new DefaultTableCellRenderer();
+        groupRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+
+        for (int i = 0; i < groupTable.getColumnModel().getColumnCount(); i++) {
+            groupTable.getColumnModel().getColumn(i).setCellRenderer(groupRenderer);
+        }
+
         groupScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         groupScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     }
@@ -155,46 +122,30 @@ public class MeaningfulnessPanel extends JPanel {
     private void configureTable() {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        DefaultTableCellRenderer booleanRenderer =
-                new DefaultTableCellRenderer() {
-                    @Override
-                    public Component getTableCellRendererComponent(
-                            JTable table,
-                            Object value,
-                            boolean isSelected,
-                            boolean hasFocus,
-                            int row,
-                            int column) {
+        MeaningfulnessBooleanCellRenderer dictionaryRenderer =
+                new MeaningfulnessBooleanCellRenderer(true, DICTIONARY_POSITIVE_SCORE);
 
-                        Component component =
-                                super.getTableCellRendererComponent(
-                                        table, value, isSelected, hasFocus, row, column);
+        MeaningfulnessBooleanCellRenderer heuristicRenderer =
+                new MeaningfulnessBooleanCellRenderer(false, HEURISTIC_POSITIVE_SCORE);
 
-                        if (value instanceof Boolean booleanValue) {
-                            setText(booleanValue ? "Yes" : "No");
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
 
-                            if (!isSelected) {
-                                component.setBackground(
-                                        booleanValue ? UiColors.TABLE_GREEN : UiColors.TABLE_RED);
-                            }
-                        } else {
-                            if (!isSelected) {
-                                component.setBackground(Color.WHITE);
-                            }
-                        }
+        table.getColumnModel().getColumn(1).setCellRenderer(dictionaryRenderer);
 
-                        return component;
-                    }
-                };
+        int[] heuristicColumns = {3, 4, 5, 6, 7};
+        for (int columnIndex : heuristicColumns) {
+            table.getColumnModel().getColumn(columnIndex).setCellRenderer(heuristicRenderer);
+        }
 
-        int[] booleanColumns = {1, 3, 4, 5, 6, 7};
-        for (int columnIndex : booleanColumns) {
-            table.getColumnModel().getColumn(columnIndex).setCellRenderer(booleanRenderer);
+        int[] centeredColumns = {0, 2, 8};
+        for (int columnIndex : centeredColumns) {
+            table.getColumnModel().getColumn(columnIndex).setCellRenderer(centerRenderer);
         }
     }
 
     private void installResizeHandling() {
-        tableSectionPanel.addComponentListener(
+        addComponentListener(
                 new ComponentAdapter() {
                     @Override
                     public void componentResized(ComponentEvent e) {
@@ -240,23 +191,7 @@ public class MeaningfulnessPanel extends JPanel {
         table.revalidate();
     }
 
-    public void showMeaningfulness(
-            boolean meaningful,
-            double score,
-            String explanation,
-            List<TokenAnalysisRow> tokenRows) {
-
-        resultLabel.setText(
-                bundle.getString("meaningfulness.result")
-                        + " "
-                        + (meaningful
-                                ? bundle.getString("meaningfulness.meaningful")
-                                : bundle.getString("meaningfulness.notMeaningful")));
-
-        scoreLabel.setText(bundle.getString("meaningfulness.score") + " " + score + "%");
-        explanationLabel.setText(
-                bundle.getString("meaningfulness.explanation") + " " + explanation);
-
+    public void showRows(List<TokenAnalysisRow> tokenRows) {
         tableModel.setRowCount(0);
 
         for (TokenAnalysisRow row : tokenRows) {
@@ -278,9 +213,6 @@ public class MeaningfulnessPanel extends JPanel {
     }
 
     public void clear() {
-        resultLabel.setText(bundle.getString("meaningfulness.result"));
-        scoreLabel.setText(bundle.getString("meaningfulness.score"));
-        explanationLabel.setText(bundle.getString("meaningfulness.explanation"));
         tableModel.setRowCount(0);
         updateTableWidths();
     }

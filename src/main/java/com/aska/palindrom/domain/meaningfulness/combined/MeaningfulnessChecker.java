@@ -39,12 +39,10 @@ public class MeaningfulnessChecker {
         boolean meaningful = roundedScore >= MIN_MEANINGFUL_SCORE;
 
         String explanation =
-                "Dictionary score: "
+                "Dictionary-based score is "
                         + dictionaryResult.score()
-                        + "%. Heuristic score: "
+                        + "%, heuristic score is "
                         + heuristicResult.score()
-                        + "%. Final score: "
-                        + roundedScore
                         + "%.";
 
         List<String> tokens = support.requireTokens(text);

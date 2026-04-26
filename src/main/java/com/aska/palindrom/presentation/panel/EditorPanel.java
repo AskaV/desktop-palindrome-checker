@@ -1,13 +1,12 @@
 package com.aska.palindrom.presentation.panel;
 
 import com.aska.palindrom.domain.settings.NormalizationSettings;
-import com.aska.palindrom.presentation.HistoryPanel;
-import com.aska.palindrom.presentation.MeaningfulnessPanel;
 import com.aska.palindrom.presentation.config.UiBorders;
 import com.aska.palindrom.presentation.config.UiColors;
 import com.aska.palindrom.presentation.config.UiDimensions;
 import com.aska.palindrom.presentation.config.UiFonts;
 import com.aska.palindrom.presentation.panel.components.NormalizationOptionsButton;
+import com.aska.palindrom.presentation.panel.meaningfulness.MeaningfulnessPanel;
 import java.awt.*;
 import java.util.ResourceBundle;
 import javax.swing.*;

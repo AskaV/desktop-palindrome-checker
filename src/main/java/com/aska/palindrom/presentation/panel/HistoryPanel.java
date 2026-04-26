@@ -1,4 +1,4 @@
-package com.aska.palindrom.presentation;
+package com.aska.palindrom.presentation.panel;
 
 import com.aska.palindrom.presentation.config.UiColors;
 import java.awt.BorderLayout;
