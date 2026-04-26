@@ -4,6 +4,8 @@ import static com.aska.palindrom.presentation.logging.AppLogger.LOGGER;
 
 import com.aska.palindrom.domain.PalindromeChecker;
 import com.aska.palindrom.domain.TextNormalizer;
+import com.aska.palindrom.domain.meaningfulness.combined.MeaningfulnessChecker;
+import com.aska.palindrom.domain.meaningfulness.combined.MeaningfulnessResult;
 import com.aska.palindrom.domain.settings.NormalizationSettings;
 import com.aska.palindrom.presentation.panel.EditorPanel;
 import com.aska.palindrom.presentation.panel.ResultPanel;
@@ -14,17 +16,24 @@ import java.util.logging.Level;
 
 public class MainScreenController {
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
+
     private final EditorPanel editorPanel;
     private final ResultPanel resultPanel;
     private final PalindromeChecker palindromeChecker;
+    private final MeaningfulnessChecker meaningfulnessChecker;
     private final TextNormalizer textNormalizer = new TextNormalizer();
+
     private static final int MAX_INPUT_LENGTH = 1000000;
 
     public MainScreenController(
-            EditorPanel editorPanel, ResultPanel resultPanel, PalindromeChecker palindromeChecker) {
+            EditorPanel editorPanel,
+            ResultPanel resultPanel,
+            PalindromeChecker palindromeChecker,
+            MeaningfulnessChecker meaningfulnessChecker) {
         this.editorPanel = editorPanel;
         this.resultPanel = resultPanel;
         this.palindromeChecker = palindromeChecker;
+        this.meaningfulnessChecker = meaningfulnessChecker;
 
         bindActions();
     }
@@ -41,6 +50,8 @@ public class MainScreenController {
                             public void keyReleased(KeyEvent e) {
                                 resultPanel.showNotChecked();
                                 resultPanel.showError("");
+                                editorPanel.clearNormalizedText();
+                                editorPanel.getMeaningfulnessPanel().clear();
                             }
                         });
     }
@@ -52,16 +63,27 @@ public class MainScreenController {
             String text = editorPanel.getInputArea().getText();
 
             if (!isValidInput(text)) {
+                editorPanel.getMeaningfulnessPanel().clear();
                 return;
             }
 
-            String textForCheck = prepareTextForCheck(text);
-            boolean isPalindrome = palindromeChecker.isPalindrome(textForCheck);
-
+            String textForPalindromeCheck = prepareTextForCheck(text);
+            boolean isPalindrome = palindromeChecker.isPalindrome(textForPalindromeCheck);
             showCheckResult(isPalindrome);
+
+            MeaningfulnessResult meaningfulnessResult = meaningfulnessChecker.check(text);
+            editorPanel
+                    .getMeaningfulnessPanel()
+                    .showMeaningfulness(
+                            meaningfulnessResult.meaningful(),
+                            meaningfulnessResult.score(),
+                            meaningfulnessResult.explanation());
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error during palindrome check", e);
+            LOGGER.log(Level.WARNING, "Error during palindrome and meaningfulness check", e);
             resultPanel.showNotChecked();
+            resultPanel.showError("");
+            editorPanel.clearNormalizedText();
+            editorPanel.getMeaningfulnessPanel().clear();
         }
     }
 
@@ -69,14 +91,14 @@ public class MainScreenController {
         if (text.isEmpty()) {
             resultPanel.showNotChecked();
             resultPanel.showError(bundle.getString("error.inputEmpty"));
-            editorPanel.showNormalizedText("");
+            editorPanel.clearNormalizedText();
             return false;
         }
 
         if (text.length() > MAX_INPUT_LENGTH) {
             LOGGER.warning("Check skipped: input is too large, length = " + text.length());
             resultPanel.showError(bundle.getString("error.inputTooLarge"));
-            editorPanel.showNormalizedText("");
+            editorPanel.clearNormalizedText();
             return false;
         }
 
@@ -87,7 +109,7 @@ public class MainScreenController {
         NormalizationSettings settings = editorPanel.getNormalizationSettings();
 
         if (!settings.hasAnyEnabledOption()) {
-            editorPanel.showNormalizedText("");
+            editorPanel.clearNormalizedText();
             return text;
         }
 
@@ -107,9 +129,10 @@ public class MainScreenController {
     private void onClearClicked() {
         LOGGER.info("Clear button clicked");
         resultPanel.showError("");
+        resultPanel.showNotChecked();
         editorPanel.clearText();
         editorPanel.clearNormalizationCheckboxes();
         editorPanel.clearNormalizedText();
-        resultPanel.showNotChecked();
+        editorPanel.getMeaningfulnessPanel().clear();
     }
 }

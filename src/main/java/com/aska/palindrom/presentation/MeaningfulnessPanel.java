@@ -67,6 +67,7 @@ public class MeaningfulnessPanel extends JPanel {
     }
 
     public void showMeaningfulness(boolean meaningful, double score, String explanation) {
+
         resultLabel.setText(
                 bundle.getString("meaningfulness.result")
                         + " "
@@ -75,13 +76,17 @@ public class MeaningfulnessPanel extends JPanel {
                                 : bundle.getString("meaningfulness.notMeaningful")));
 
         scoreLabel.setText(bundle.getString("meaningfulness.score") + " " + score + "%");
-        explanationArea.setText(explanation);
+        explanationLabel.setText(
+                bundle.getString("meaningfulness.explanation") + " " + explanation);
+
+        explanationArea.setText("detailedExplanation");
         explanationArea.setCaretPosition(0);
     }
 
     public void clear() {
         resultLabel.setText(bundle.getString("meaningfulness.result"));
         scoreLabel.setText(bundle.getString("meaningfulness.score"));
+        explanationLabel.setText(bundle.getString("meaningfulness.explanation"));
         explanationArea.setText("");
         explanationArea.setCaretPosition(0);
     }
