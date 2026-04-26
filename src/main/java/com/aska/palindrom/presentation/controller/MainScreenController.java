@@ -61,6 +61,9 @@ public class MainScreenController {
                 .getClearHistoryButton()
                 .addActionListener(e -> historyManager.clearHistory());
 
+        editorPanel.installInputFileDropHandler(
+                this::resetCurrentResults, message -> resultPanel.showError(message));
+
         editorPanel
                 .getInputArea()
                 .addKeyListener(
@@ -146,6 +149,13 @@ public class MainScreenController {
         } else {
             resultPanel.showFailure();
         }
+    }
+
+    private void resetCurrentResults() {
+        resultPanel.showNotChecked();
+        resultPanel.showError("");
+        editorPanel.clearNormalizedText();
+        editorPanel.getMeaningfulnessPanel().clear();
     }
 
     private void onClearClicked() {
