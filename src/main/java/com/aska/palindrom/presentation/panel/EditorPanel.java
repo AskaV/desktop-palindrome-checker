@@ -46,12 +46,14 @@ public class EditorPanel extends JPanel {
 
         return tabbedPane;
     }
+
     private JPanel createInputTab() {
         JPanel panel = new JPanel(new BorderLayout(0, 0));
         panel.add(new JScrollPane(inputArea), BorderLayout.CENTER);
         panel.add(createButtonsPanel(), BorderLayout.PAGE_END);
         return panel;
     }
+
     private JPanel createButtonsPanel() {
         JPanel panel =
                 new JPanel(
@@ -70,7 +72,6 @@ public class EditorPanel extends JPanel {
 
         return panel;
     }
-
 
     private JTextArea createTextArea(boolean editable) {
         JTextArea area = new JTextArea();

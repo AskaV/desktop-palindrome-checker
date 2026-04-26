@@ -4,6 +4,8 @@ import static com.aska.palindrom.presentation.logging.AppLogger.LOGGER;
 
 import com.aska.palindrom.domain.PalindromeChecker;
 import com.aska.palindrom.domain.TextNormalizer;
+import com.aska.palindrom.domain.history.HistoryCsvExporter;
+import com.aska.palindrom.domain.history.HistoryEntry;
 import com.aska.palindrom.domain.meaningfulness.combined.MeaningfulnessChecker;
 import com.aska.palindrom.domain.meaningfulness.combined.MeaningfulnessResult;
 import com.aska.palindrom.domain.settings.NormalizationSettings;
@@ -11,10 +13,21 @@ import com.aska.palindrom.presentation.panel.EditorPanel;
 import com.aska.palindrom.presentation.panel.ResultPanel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class MainScreenController {
+    private static final int MAX_INPUT_LENGTH = 1000000;
+    private static final int HISTORY_PREVIEW_LENGTH = 40;
+
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
 
     private final EditorPanel editorPanel;
@@ -22,8 +35,9 @@ public class MainScreenController {
     private final PalindromeChecker palindromeChecker;
     private final MeaningfulnessChecker meaningfulnessChecker;
     private final TextNormalizer textNormalizer = new TextNormalizer();
+    private final HistoryCsvExporter historyCsvExporter = new HistoryCsvExporter();
 
-    private static final int MAX_INPUT_LENGTH = 1000000;
+    private final List<HistoryEntry> historyEntries = new ArrayList<>();
 
     public MainScreenController(
             EditorPanel editorPanel,
@@ -41,6 +55,10 @@ public class MainScreenController {
     private void bindActions() {
         editorPanel.getCheckButton().addActionListener(e -> onCheckClicked());
         editorPanel.getClearButton().addActionListener(e -> onClearClicked());
+        editorPanel
+                .getHistoryPanel()
+                .getExportCsvButton()
+                .addActionListener(e -> onExportCsvClicked());
 
         editorPanel
                 .getInputArea()
@@ -79,6 +97,8 @@ public class MainScreenController {
                             meaningfulnessResult.score(),
                             meaningfulnessResult.explanation(),
                             meaningfulnessResult.tokenRows());
+
+            addToHistory(text, isPalindrome, meaningfulnessResult);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error during palindrome and meaningfulness check", e);
             resultPanel.showNotChecked();
@@ -125,6 +145,94 @@ public class MainScreenController {
         } else {
             resultPanel.showFailure();
         }
+    }
+
+    private void addToHistory(
+            String inputText, boolean isPalindrome, MeaningfulnessResult meaningfulnessResult) {
+
+        String timestamp =
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        String inputPreview = buildInputPreview(inputText);
+
+        String palindromeResult =
+                isPalindrome
+                        ? bundle.getString("history.value.palindrome")
+                        : bundle.getString("history.value.notPalindrome");
+
+        String meaningfulnessResultText =
+                meaningfulnessResult.meaningful()
+                        ? bundle.getString("history.value.meaningful")
+                        : bundle.getString("history.value.notMeaningful");
+
+        String scoreText = meaningfulnessResult.score() + "%";
+
+        HistoryEntry entry =
+                new HistoryEntry(
+                        timestamp,
+                        inputPreview,
+                        palindromeResult,
+                        meaningfulnessResultText,
+                        scoreText);
+
+        historyEntries.add(entry);
+
+        editorPanel
+                .getHistoryPanel()
+                .addHistoryEntry(
+                        entry.timestamp(),
+                        entry.inputPreview(),
+                        entry.palindromeResult(),
+                        entry.meaningfulnessResult(),
+                        entry.scoreText());
+    }
+
+    private String buildInputPreview(String text) {
+        String singleLine = text.replaceAll("\\s+", " ").trim();
+
+        if (singleLine.length() <= HISTORY_PREVIEW_LENGTH) {
+            return singleLine;
+        }
+
+        return singleLine.substring(0, HISTORY_PREVIEW_LENGTH) + "...";
+    }
+
+    private void onExportCsvClicked() {
+        LOGGER.info("Export CSV button clicked");
+        resultPanel.showError("");
+
+        if (historyEntries.isEmpty()) {
+            resultPanel.showError(bundle.getString("history.export.empty"));
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(bundle.getString("history.export.dialogTitle"));
+        fileChooser.setSelectedFile(new java.io.File("history.csv"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV files", "csv"));
+
+        int result = fileChooser.showSaveDialog(editorPanel);
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        Path filePath = fileChooser.getSelectedFile().toPath();
+        if (!filePath.toString().toLowerCase().endsWith(".csv")) {
+            filePath = Path.of(filePath.toString() + ".csv");
+        }
+
+        try {
+            historyCsvExporter.export(historyEntries, filePath);
+            LOGGER.info("History exported to CSV: " + filePath);
+            resultPanel.showSuccessMessage(bundle.getString("history.export.success"));
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Failed to export history to CSV", e);
+            resultPanel.showError(bundle.getString("history.export.error"));
+        }
+    }
+
+    public List<HistoryEntry> getHistoryEntries() {
+        return List.copyOf(historyEntries);
     }
 
     private void onClearClicked() {
