@@ -53,6 +53,10 @@ public class HistoryJsonStorage {
             String meaningfulnessResult = extractJsonValue(normalized, "meaningfulnessResult");
             String scoreText = extractJsonValue(normalized, "scoreText");
 
+            if (timestamp.isEmpty() || fullInput.isEmpty()) {
+                throw new IllegalArgumentException("Invalid history JSON structure");
+            }
+
             result.add(
                     new HistoryEntry(
                             timestamp,

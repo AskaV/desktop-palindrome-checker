@@ -16,7 +16,7 @@ public class MeaningfulnessTokenizer {
         String[] rawTokens = text.toLowerCase(Locale.ROOT).split("\\s+");
 
         for (String rawToken : rawTokens) {
-            String cleanedToken = rawToken.replaceAll("[^a-z]", "");
+            String cleanedToken = rawToken.replaceAll("[^\\p{L}]", "");
             if (!cleanedToken.isBlank()) {
                 tokens.add(cleanedToken);
             }

@@ -42,25 +42,22 @@ public class RandomSequenceHeuristicChecker {
         boolean noRepeatedCharacterSequence = !hasRepeatedCharacterSequence(token, 4);
         boolean noRarePattern = !containsRarePattern(token);
         boolean reasonableLength = hasReasonableLength(token);
+
         double score = 0.0;
 
-        if (hasVowel(token)) {
+        if (hasVowel) {
             score += CHECK_WEIGHT;
         }
-
-        if (!hasLongConsonantSequence(token, 4)) {
+        if (noLongConsonantSequence) {
             score += CHECK_WEIGHT;
         }
-
-        if (!hasRepeatedCharacterSequence(token, 4)) {
+        if (noRepeatedCharacterSequence) {
             score += CHECK_WEIGHT;
         }
-
-        if (!containsRarePattern(token)) {
+        if (noRarePattern) {
             score += CHECK_WEIGHT;
         }
-
-        if (hasReasonableLength(token)) {
+        if (reasonableLength) {
             score += CHECK_WEIGHT;
         }
 

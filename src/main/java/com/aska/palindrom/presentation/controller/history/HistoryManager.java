@@ -55,6 +55,7 @@ public class HistoryManager {
             LOGGER.info("History loaded successfully");
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Failed to load history", e);
+            historyEntries.clear();
             resultPanel.showError(bundle.getString("history.load.error"));
         }
     }

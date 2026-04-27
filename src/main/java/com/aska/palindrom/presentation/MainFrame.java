@@ -4,9 +4,11 @@ import static com.aska.palindrom.presentation.logging.AppLogger.LOGGER;
 
 import com.aska.palindrom.presentation.config.WindowSettings;
 import com.aska.palindrom.presentation.panel.MainPanel;
-import java.awt.*;
+import java.awt.Dimension;
 import java.net.URL;
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 public class MainFrame extends JFrame {
 
@@ -15,7 +17,6 @@ public class MainFrame extends JFrame {
         WindowSettings windowSettings = WindowSettings.defaultSettings();
         configureWindow(windowSettings);
         setContentPane(new MainPanel());
-        setVisible(true);
     }
 
     private void configureWindow(WindowSettings settings) {

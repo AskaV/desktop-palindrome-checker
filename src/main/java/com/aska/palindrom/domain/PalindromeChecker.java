@@ -1,11 +1,8 @@
 package com.aska.palindrom.domain;
 
-import static com.aska.palindrom.presentation.logging.AppLogger.LOGGER;
-
 public class PalindromeChecker {
 
     public boolean isPalindrome(String text) {
-        LOGGER.info("Start palindrome checking logic");
 
         if (text == null || text.equals("")) {
             return false;

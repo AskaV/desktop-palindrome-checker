@@ -101,6 +101,16 @@ The application supports:
 
 If a dropped file cannot be read or is not supported, the application shows an error message instead of crashing.
 
+## Updating the word list
+
+The dictionary file is stored at:
+`src/main/resources/dictionary/english_words.txt`
+
+To update it:
+1. Replace the file with a new UTF-8 text file containing one word per line.
+2. Keep the resource path unchanged, or update the code accordingly.
+3. Rebuild the project.
+4. Run the meaningfulness tests again.
 
 ## Prerequisites
 
