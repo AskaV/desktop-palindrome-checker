@@ -134,7 +134,7 @@ public class MainScreenController {
         NormalizationSettings settings = editorPanel.getNormalizationSettings();
 
         if (!settings.hasAnyEnabledOption()) {
-            editorPanel.clearNormalizedText();
+            editorPanel.showNormalizedText(text);
             return text;
         }
 

@@ -94,6 +94,12 @@ The user can:
 
 Double-clicking a history row opens the full original input text.
 
+### CSV note
+History is exported as a standard comma-separated CSV file using `,` as the delimiter, not `;`.
+
+Because spreadsheet applications on Windows may use regional settings, the file may open differently on different machines.
+If the columns are not split correctly when opening the CSV file, import it manually and select `,` as the delimiter.
+
 ## File input
 The application supports:
 - drag and drop of `.txt` files into the input field
