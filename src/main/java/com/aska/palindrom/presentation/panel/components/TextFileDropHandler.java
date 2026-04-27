@@ -23,46 +23,60 @@ public class TextFileDropHandler extends TransferHandler {
 
     @Override
     public boolean canImport(TransferSupport support) {
-        return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
+        return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+                || support.isDataFlavorSupported(DataFlavor.stringFlavor);
     }
 
     @Override
     public boolean importData(TransferSupport support) {
         if (!canImport(support)) {
-            onError.accept("Only file drag and drop is supported.");
+            onError.accept("Only text or file import is supported.");
             return false;
         }
 
         try {
-            @SuppressWarnings("unchecked")
-            List<File> files =
-                    (List<File>)
-                            support.getTransferable()
-                                    .getTransferData(DataFlavor.javaFileListFlavor);
+            if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                @SuppressWarnings("unchecked")
+                List<File> files =
+                        (List<File>)
+                                support.getTransferable()
+                                        .getTransferData(DataFlavor.javaFileListFlavor);
 
-            if (files.isEmpty()) {
-                onError.accept("No file was provided.");
-                return false;
+                if (files.isEmpty()) {
+                    onError.accept("No file was provided.");
+                    return false;
+                }
+
+                File file = files.get(0);
+
+                if (!isSupportedTextFile(file)) {
+                    onError.accept("Only .txt files are supported.");
+                    return false;
+                }
+
+                String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+                inputArea.setText(content);
+                inputArea.setCaretPosition(0);
+                onSuccess.run();
+                return true;
             }
 
-            File file = files.get(0);
+            if (support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                String text =
+                        (String) support.getTransferable().getTransferData(DataFlavor.stringFlavor);
 
-            if (!isSupportedTextFile(file)) {
-                onError.accept("Only .txt files are supported.");
-                return false;
+                inputArea.replaceSelection(text);
+                onSuccess.run();
+                return true;
             }
 
-            String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-            inputArea.setText(content);
-            inputArea.setCaretPosition(0);
-
-            onSuccess.run();
-            return true;
+            onError.accept("Unsupported import format.");
+            return false;
         } catch (IOException e) {
             onError.accept("Could not read the dropped file.");
             return false;
         } catch (Exception e) {
-            onError.accept("Could not import the dropped file.");
+            onError.accept("Could not import the provided content.");
             return false;
         }
     }

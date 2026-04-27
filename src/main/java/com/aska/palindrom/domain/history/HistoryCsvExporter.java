@@ -19,7 +19,7 @@ public class HistoryCsvExporter {
                 writer.write(
                         escape(entry.timestamp())
                                 + ","
-                                + escape(entry.inputPreview())
+                                + escape(entry.fullInput())
                                 + ","
                                 + escape(entry.palindromeResult())
                                 + ","

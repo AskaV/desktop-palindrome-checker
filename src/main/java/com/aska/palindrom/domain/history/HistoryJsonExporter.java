@@ -21,7 +21,7 @@ public class HistoryJsonExporter {
                 writer.newLine();
                 writer.write("    \"timestamp\": " + toJson(entry.timestamp()) + ",");
                 writer.newLine();
-                writer.write("    \"inputPreview\": " + toJson(entry.inputPreview()) + ",");
+                writer.write("    \"inputPreview\": " + toJson(entry.fullInput()) + ",");
                 writer.newLine();
                 writer.write("    \"palindromeResult\": " + toJson(entry.palindromeResult()) + ",");
                 writer.newLine();

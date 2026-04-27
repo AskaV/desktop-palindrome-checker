@@ -49,12 +49,7 @@ public class HistoryManager {
             for (HistoryEntry entry : loadedEntries) {
                 editorPanel
                         .getHistoryPanel()
-                        .addHistoryEntry(
-                                entry.timestamp(),
-                                entry.inputPreview(),
-                                entry.palindromeResult(),
-                                entry.meaningfulnessResult(),
-                                entry.scoreText());
+                        .addHistoryEntry(entry, buildInputPreview(entry.fullInput()));
             }
 
             LOGGER.info("History loaded successfully");
@@ -69,8 +64,6 @@ public class HistoryManager {
 
         String timestamp =
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-        String inputPreview = buildInputPreview(inputText);
 
         String palindromeResult =
                 isPalindrome
@@ -87,7 +80,7 @@ public class HistoryManager {
         HistoryEntry entry =
                 new HistoryEntry(
                         timestamp,
-                        inputPreview,
+                        inputText,
                         palindromeResult,
                         meaningfulnessResultText,
                         scoreText);
@@ -95,14 +88,7 @@ public class HistoryManager {
         historyEntries.add(entry);
         saveHistorySilently();
 
-        editorPanel
-                .getHistoryPanel()
-                .addHistoryEntry(
-                        entry.timestamp(),
-                        entry.inputPreview(),
-                        entry.palindromeResult(),
-                        entry.meaningfulnessResult(),
-                        entry.scoreText());
+        editorPanel.getHistoryPanel().addHistoryEntry(entry, buildInputPreview(entry.fullInput()));
     }
 
     public void exportCsv() {

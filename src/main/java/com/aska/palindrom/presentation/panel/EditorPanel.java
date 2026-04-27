@@ -6,9 +6,11 @@ import com.aska.palindrom.presentation.config.UiColors;
 import com.aska.palindrom.presentation.config.UiDimensions;
 import com.aska.palindrom.presentation.config.UiFonts;
 import com.aska.palindrom.presentation.panel.components.NormalizationOptionsButton;
+import com.aska.palindrom.presentation.panel.components.TextFileDropHandler;
 import com.aska.palindrom.presentation.panel.meaningfulness.MeaningfulnessPanel;
 import java.awt.*;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import javax.swing.*;
 
 public class EditorPanel extends JPanel {
@@ -82,6 +84,10 @@ public class EditorPanel extends JPanel {
         area.setBorder(UiBorders.padding(UiDimensions.TEXT_PADDING));
 
         return area;
+    }
+
+    public void installInputFileDropHandler(Runnable onSuccess, Consumer<String> onError) {
+        inputArea.setTransferHandler(new TextFileDropHandler(inputArea, onSuccess, onError));
     }
 
     public JTextArea getInputArea() {

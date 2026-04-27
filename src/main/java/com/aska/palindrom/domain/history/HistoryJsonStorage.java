@@ -19,7 +19,6 @@ public class HistoryJsonStorage {
         }
 
         String content = Files.readString(path);
-
         return parseEntries(content);
     }
 
@@ -49,7 +48,7 @@ public class HistoryJsonStorage {
             }
 
             String timestamp = extractJsonValue(normalized, "timestamp");
-            String inputPreview = extractJsonValue(normalized, "inputPreview");
+            String fullInput = extractJsonValue(normalized, "fullInput");
             String palindromeResult = extractJsonValue(normalized, "palindromeResult");
             String meaningfulnessResult = extractJsonValue(normalized, "meaningfulnessResult");
             String scoreText = extractJsonValue(normalized, "scoreText");
@@ -57,7 +56,7 @@ public class HistoryJsonStorage {
             result.add(
                     new HistoryEntry(
                             timestamp,
-                            inputPreview,
+                            fullInput,
                             palindromeResult,
                             meaningfulnessResult,
                             scoreText));
