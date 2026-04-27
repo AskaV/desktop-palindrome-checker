@@ -1,0 +1,30 @@
+package com.aska.palindrom.domain.meaningfulness;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+public class EnglishWordListTest {
+
+    private final EnglishWordList dictionary = new EnglishWordList();
+
+    @Test
+    @DisplayName("Contain common English word")
+    void shouldContainCommonEnglishWord() {
+        assertTrue(dictionary.contains("hello"));
+    }
+
+    @Test
+    @DisplayName("Contain common English word regardless of case")
+    void shouldContainWordIgnoringCase() {
+        assertTrue(dictionary.contains("Hello"));
+    }
+
+    @Test
+    @DisplayName("Return false for random token")
+    void shouldReturnFalseForRandomToken() {
+        assertFalse(dictionary.contains("xqzplm"));
+    }
+}

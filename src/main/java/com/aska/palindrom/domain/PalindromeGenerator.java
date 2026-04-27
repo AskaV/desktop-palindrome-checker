@@ -7,7 +7,8 @@ public class PalindromeGenerator {
             throw new IllegalArgumentException("Block size must be greater than zero");
         }
         if (stringLength < 10) {
-            throw new IllegalArgumentException("Generated palindrome length must be at least 10 characters");
+            throw new IllegalArgumentException(
+                    "Generated palindrome length must be at least 10 characters");
         }
 
         char[] chars = {'a', 'b', 'c', 'd', 'e'};

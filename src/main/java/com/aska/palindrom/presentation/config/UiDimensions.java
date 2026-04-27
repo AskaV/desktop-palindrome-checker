@@ -16,5 +16,5 @@ public final class UiDimensions {
     public static final int MAIN_GAP = LARGE;
     public static final int BUTTONS_GAP = 18;
     public static final Insets MAIN_PADDING = new Insets(24, 24, 24, 24);
-    public static final Dimension ACTION_BUTTON_SIZE = new Dimension(150, 50);
+    public static final Dimension ACTION_BUTTON_SIZE = new Dimension(150, 36);
 }

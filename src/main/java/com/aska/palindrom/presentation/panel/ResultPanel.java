@@ -55,7 +55,13 @@ public class ResultPanel extends JPanel {
         resultField.setBackground(UiColors.RESULT_ERROR);
     }
 
-    public void showError(String message) {
+    public void showError(String errorText) {
+        errorLabel.setForeground(UiColors.RESULT_ERROR);
+        errorLabel.setText(errorText);
+    }
+
+    public void showSuccessMessage(String message) {
+        errorLabel.setForeground(UiColors.RESULT_SUCCESS);
         errorLabel.setText(message);
     }
 }

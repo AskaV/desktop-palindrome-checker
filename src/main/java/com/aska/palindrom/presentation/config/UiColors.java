@@ -10,4 +10,7 @@ public class UiColors {
     public static final Color RESULT_NEUTRAL = new Color(110, 110, 110);
     public static final Color RESULT_SUCCESS = new Color(30, 180, 30);
     public static final Color RESULT_ERROR = new Color(196, 25, 25);
+
+    public static final Color TABLE_GREEN = new Color(220, 255, 220);
+    public static final Color TABLE_RED = new Color(255, 220, 220);
 }
